@@ -20,6 +20,17 @@ def scrollToBottom(driver):
         sleep(0.1)
         els = driver.find_elements_by_xpath("//div[@data-sigil='m-loading-indicator-animate m-loading-indicator-root'][@class='_2so _2sq _2ss img _50cg']")
         sys.stdout.write('.')
+        sys.stdout.flush()
+
+        height = driver.execute_script("return(document.body.scrollHeight);")
+        
+        if (height == lastheight):
+            attempts += 1
+        else:
+            attempts = 0
+
+        if attempts > 40:
+            break
     
     print('.')
 
@@ -64,11 +75,9 @@ user_ids = getUserIds(driver)
 driver.quit()
 print(len(user_ids))
 
-# all_photos = set()
-# year = '2016'
-# all_photos = set()
-
 prevlen = 0
+
+f = open('all_photos_2012.txt', 'w')
 
 for year in ['2012', '2011', '2010']:
     driver = webdriver.PhantomJS()
@@ -107,13 +116,10 @@ for year in ['2012', '2011', '2010']:
         
         prevlen = len(photos)
 
-    #     driver.save_screenshot('test2015.png')
+        for photoid in photos:
+            f.write(photoid + '\n')
+
     
     driver.quit()
-
-f = open('all_photos_2011.txt', 'w')
-
-for photoid in all_photos:
-    f.write(photoid + '\n')
 
 f.close()
